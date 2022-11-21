@@ -11,6 +11,48 @@
         WindowStyle="None" WindowStartupLocation="CenterScreen"
         Background="Transparent"
         Loaded="Window_Loaded">
+    <Window.Resources>
+        
+        <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToolTip}">
+                        <Border Background="#303c56" CornerRadius="5" Padding="8"  >
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ToolTipService.Placement" Value="Bottom"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" Width="{TemplateBinding Width}"
+                                         Height="{TemplateBinding Height}" CornerRadius="5" Opacity="0.5"/>
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1b3044"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Path Stretch="Fill" StrokeThickness="3" Fill="#071425" PreviewMouseLeftButtonDown="Path_PreviewMouseLeftButtonDown"
               Data="M 0 0 a 0 10 0 0 1 10 0 h 200 l 20 20 h 90 a 10 10 0 0 1 8 8
@@ -37,11 +79,12 @@
         </Rectangle>
         <!--#endregion-->
 
-        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" 
+        <Grid x:Name="DropArea" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" 
               DragEnter="Grid_DragEnter" DragLeave="Grid_DragLeave" Cursor="Hand"
               PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"
-              DragDrop.Drop="Grid_Drop">
+              DragDrop.Drop="Grid_Drop" >
             <Rectangle
+            x:Name="dropZone"
             Fill="#030a1a"
             Opacity="0.7"
             RadiusX="10"
@@ -51,7 +94,8 @@
             StrokeDashCap="Round"
             Stroke="#3cc9f5"
             Height="180"
-            Width="240"/>
+            Width="240">
+            </Rectangle>
 
             <Path Width="32" Height="26" Stretch="Fill" Data="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1h-2z"
                                                       Fill="LightGray" />
@@ -61,7 +105,32 @@
                        Foreground="LightGray" Margin="0 55 0 0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>
 
-    
+        <Grid x:Name="ActionArea" Visibility="Collapsed"  VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border Background="#1b3044" CornerRadius="15" Width="200" Height="100"
+                    Margin="0 20 0 0" Opacity="0.5"/>
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock x:Name="LoadedDllTitle" FontFamily="Poppins" TextAlignment="Center"
+                       Foreground="LightGray" Margin="0 0 0 0" MaxWidth="200" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="15">
+
+                    <Button Width="80" Height="80" Click="Inject_Click">
+                        <Button.ToolTip>
+                            <TextBlock Text="Inject dll" Foreground="LightGray" FontSize="10" FontFamily="Poppins" Background="Transparent"/>
+                        </Button.ToolTip>
+                        <Path Stretch="Fill" Data="M7.5 1v7h1V1h-1z M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z" 
+                              Fill="LightGray" Height="33" Width="30"/>
+                    </Button>
+                    
+                    <Button Width="80" Height="80" Margin="10 0 0 0" Click="UnloadDll_Click">
+                        <Button.ToolTip>
+                            <TextBlock Text="Unload dll" Foreground="LightGray" FontSize="10" FontFamily="Poppins" Background="Transparent"/>
+                        </Button.ToolTip>
+                        <Path Stretch="Fill" Data="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" 
+                              Fill="LightGray" Height="30" Width="30"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
 
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="12"
                     Orientation="Horizontal">
@@ -75,7 +144,7 @@
             <StackPanel x:Name="waitCsGoPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120 0 0 12">
                 <Path x:Name="waitCsGo" Data="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" Fill="LightGray"/>
 
-                <TextBlock Text="Waiting for the launch of CS:GO" Margin="5 0 0 0" FontFamily="Poppins" FontSize="10.5"
+                <TextBlock x:Name="WaitingCsGoTitle" Text="Waiting for the launch of CS:GO" Margin="5 0 0 0" FontFamily="Poppins" FontSize="10.5"
                        Foreground="#415672"/>
             </StackPanel>
 
@@ -86,6 +155,7 @@
                        Foreground="#415672"/>
             </StackPanel>
         </Grid>
+
 
     </Grid>
 
