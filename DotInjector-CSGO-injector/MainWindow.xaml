@@ -1,0 +1,92 @@
+﻿<Window x:Class="DotInjector_CSGO_injector.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DotInjector_CSGO_injector"
+        Width="320" Height="300"
+        mc:Ignorable="d"
+        Title="DotInjector"
+        AllowsTransparency="True"
+        WindowStyle="None" WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Path Stretch="Fill" StrokeThickness="3" Fill="#071425" PreviewMouseLeftButtonDown="Path_PreviewMouseLeftButtonDown"
+              Data="M 0 0 a 0 10 0 0 1 10 0 h 200 l 20 20 h 90 a 10 10 0 0 1 8 8
+              v 150 20 a 0 10 0 0   1 -10 0 h -200 l -20 -20 h -90 H 10 a 10 8 0 0 1 -10 -8 z">
+        </Path>
+
+        <!--#region Inner glow -->
+        <Rectangle VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0 2 0 0" Width="80"
+                   Height="20" Opacity="0.2"
+                   Fill="#3cc9f5">
+            <Rectangle.Effect>
+                <BlurEffect Radius="100"/>
+
+            </Rectangle.Effect>
+        </Rectangle>
+
+        <Rectangle VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 0 2" Width="50"
+                   Height="20" Opacity="0.3"
+                   Fill="#3cc9f5">
+            <Rectangle.Effect>
+                <BlurEffect Radius="100"/>
+
+            </Rectangle.Effect>
+        </Rectangle>
+        <!--#endregion-->
+
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" 
+              DragEnter="Grid_DragEnter" DragLeave="Grid_DragLeave" Cursor="Hand"
+              PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"
+              DragDrop.Drop="Grid_Drop">
+            <Rectangle
+            Fill="#030a1a"
+            Opacity="0.7"
+            RadiusX="10"
+            RadiusY="10"
+            StrokeDashArray="3"
+            StrokeThickness="1.5"
+            StrokeDashCap="Round"
+            Stroke="#3cc9f5"
+            Height="180"
+            Width="240"/>
+
+            <Path Width="32" Height="26" Stretch="Fill" Data="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1h-2z"
+                                                      Fill="LightGray" />
+            <Path Width="14" Height="22" Margin="0 0 0 11" Stretch="Fill" Data="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"
+                                                      Fill="LightGray" />
+            <TextBlock x:Name="DragTitle" Text="Drag .dll file to inject" FontFamily="Poppins" TextAlignment="Center"
+                       Foreground="LightGray" Margin="0 55 0 0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+
+    
+
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="12"
+                    Orientation="Horizontal">
+            <Ellipse Fill="#ff5c59" Height="13" Width="13" Margin="0 0 5 0" Cursor="Hand" MouseLeftButtonDown="Close_Click" />
+            <Ellipse Fill="#3cc9f5" Height="13" Width="13" Cursor="Hand"  MouseLeftButtonDown="Minimize_Click"/>
+            <TextBlock Text="DotInjector" Margin="15 0 0 0" FontFamily="Poppins" FontSize="10"
+                       Foreground="#415672" VerticalAlignment="Top"/>
+        </StackPanel>
+
+        <Grid>
+            <StackPanel x:Name="waitCsGoPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120 0 0 12">
+                <Path x:Name="waitCsGo" Data="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" Fill="LightGray"/>
+
+                <TextBlock Text="Waiting for the launch of CS:GO" Margin="5 0 0 0" FontFamily="Poppins" FontSize="10.5"
+                       Foreground="#415672"/>
+            </StackPanel>
+
+            <StackPanel x:Name="findCsGoPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="120 0 0 12" Visibility="Collapsed">
+                <Path Data="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" Fill="LightGreen"/>
+
+                <TextBlock x:Name="findCsGoTitle" Margin="5 0 0 0" FontFamily="Poppins" FontSize="10.5"
+                       Foreground="#415672"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+
+</Window>
