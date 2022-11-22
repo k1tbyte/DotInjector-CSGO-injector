@@ -1,30 +1,21 @@
 ﻿using DotInjector_CSGO_injector.Injector;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace DotInjector_CSGO_injector
 {
     public partial class MainWindow : Window
     {
         readonly Storyboard DropStrokeStoryboard = new Storyboard();
+        readonly RotateTransform AwaitCsProcessTransform = new RotateTransform();
 
         Process CsProcess = null;
         bool Find = false;
@@ -34,11 +25,11 @@ namespace DotInjector_CSGO_injector
         {
             InitializeComponent();
             var doubleAnimation = new DoubleAnimation(-360, 0, new Duration(TimeSpan.FromSeconds(1.5)));
-            var rotateTransform = new RotateTransform();
-            waitCsGo.RenderTransform = rotateTransform;
+            waitCsGo.RenderTransform = AwaitCsProcessTransform;
             waitCsGo.RenderTransformOrigin = new Point(0.5, 0.5);
             doubleAnimation.RepeatBehavior = RepeatBehavior.Forever;
-            rotateTransform.BeginAnimation(RotateTransform.AngleProperty, doubleAnimation);
+            AwaitCsProcessTransform.BeginAnimation(RotateTransform.AngleProperty, doubleAnimation);
+
 
             var colorAnim = new ColorAnimation(Colors.GreenYellow, new Duration(TimeSpan.FromSeconds(1.2)))
             {
@@ -89,8 +80,6 @@ namespace DotInjector_CSGO_injector
 
             DllPath = dialog.FileName;
             LoadedChangeProperty(System.IO.Path.GetFileName(DllPath));
-
-            //     Hook.Inject(Process.GetProcessesByName("csgo")?.FirstOrDefault(), dialog.FileName);
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -109,6 +98,7 @@ namespace DotInjector_CSGO_injector
                             findCsGoPanel.Visibility = Visibility.Visible;
                             waitCsGoPanel.Visibility = Visibility.Collapsed;
                             findCsGoTitle.Text = $"CS:GO process found | PID:{CsProcess.Id}";
+                            waitCsGo.RenderTransform = null;
                         });
                     }
                     else if(CsProcess == null && Find)
@@ -118,6 +108,7 @@ namespace DotInjector_CSGO_injector
                         {
                             findCsGoPanel.Visibility = Visibility.Collapsed;
                             waitCsGoPanel.Visibility = Visibility.Visible;
+                            waitCsGo.RenderTransform = AwaitCsProcessTransform;
                         });
                     }
                         
@@ -150,6 +141,7 @@ namespace DotInjector_CSGO_injector
 
         private void UnloadDll_Click(object sender, RoutedEventArgs e)
         {
+            ErrTitle.Text = String.Empty;
             ActionArea.Visibility = Visibility.Collapsed;
             DropArea.Visibility = Visibility.Visible;
             DllPath = null;
@@ -157,6 +149,7 @@ namespace DotInjector_CSGO_injector
 
         private async void Inject_Click(object sender, RoutedEventArgs e)
         {
+            ErrTitle.Text = String.Empty;
             if(!Find)
             {
                 var brush = new BrushConverter().ConvertFromString("#415672") as Brush;
@@ -174,18 +167,29 @@ namespace DotInjector_CSGO_injector
             switch(Hook.Inject(CsProcess, DllPath))
             {
                 case InjectResponse.InvalidPath:
+                    ErrTitle.Text = "Error! Invalid path";
                     break;
                 case InjectResponse.DllNotExist:
+                    ErrTitle.Text = "Error! Dll was not found";
                     break;
                 case InjectResponse.InvalidProcess:
+                    ErrTitle.Text = "Error! Invalid process";
                     break;
                 case InjectResponse.BypassRestoreHookError:
+                    ErrTitle.Text = "VAC Bypass Error";
                     break;
                 case InjectResponse.BypassUnhookError:
+                    ErrTitle.Text = "VAC Bypass Error";
                     break;
                 case InjectResponse.Not32xDll:
+                    ErrTitle.Text = "Injection error! 64x bit dll";
                     break;
                 case InjectResponse.OK:
+                    ErrTitle.Text = "Successfully injected!";
+                    ErrTitle.Foreground = Brushes.LightGreen;
+                    await Task.Delay(1000);
+                    ErrTitle.Foreground = Brushes.PaleVioletRed;
+                    UnloadDll_Click(null, null);
                     break;
 
             }
