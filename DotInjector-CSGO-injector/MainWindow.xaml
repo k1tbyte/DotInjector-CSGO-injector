@@ -82,7 +82,7 @@
         <Grid x:Name="DropArea" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" 
               DragEnter="Grid_DragEnter" DragLeave="Grid_DragLeave" Cursor="Hand"
               PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"
-              DragDrop.Drop="Grid_Drop" Visibility="Collapsed" >
+              DragDrop.Drop="Grid_Drop" Visibility="Visible" >
             <Rectangle
             x:Name="dropZone"
             Fill="#030a1a"
@@ -105,11 +105,11 @@
                        Foreground="LightGray" Margin="0 55 0 0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>
 
-        <Grid x:Name="ActionArea" Visibility="Visible"  VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid x:Name="ActionArea" Visibility="Collapsed"  VerticalAlignment="Center" HorizontalAlignment="Center">
             <Border Background="#1b3044" CornerRadius="15" Width="200" Height="100"
                     Margin="0 20 0 0" Opacity="0.5"/>
             
-            <TextBlock x:Name="ErrTitle" Text="Error was occured" VerticalAlignment="Bottom" FontSize="10"
+            <TextBlock x:Name="ErrTitle" VerticalAlignment="Bottom" FontSize="10"
                         FontFamily="Poppins" HorizontalAlignment="Center"
                        Margin="0 0 0 -15" Foreground="PaleVioletRed"/>
            
