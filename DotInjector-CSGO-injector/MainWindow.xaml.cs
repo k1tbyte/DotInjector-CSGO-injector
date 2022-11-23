@@ -176,10 +176,10 @@ namespace DotInjector_CSGO_injector
                     ErrTitle.Text = "Error! Invalid process";
                     break;
                 case InjectResponse.BypassRestoreHookError:
-                    ErrTitle.Text = "VAC Bypass Error";
+                    ErrTitle.Text = "VAC Bypass error";
                     break;
                 case InjectResponse.BypassUnhookError:
-                    ErrTitle.Text = "VAC Bypass Error";
+                    ErrTitle.Text = "VAC Bypass restore error";
                     break;
                 case InjectResponse.Not32xDll:
                     ErrTitle.Text = "Injection error! 64x bit dll";
@@ -189,7 +189,7 @@ namespace DotInjector_CSGO_injector
                     ErrTitle.Foreground = Brushes.LightGreen;
                     await Task.Delay(1000);
                     ErrTitle.Foreground = Brushes.PaleVioletRed;
-                    UnloadDll_Click(null, null);
+                    App.Current.Shutdown();
                     break;
 
             }

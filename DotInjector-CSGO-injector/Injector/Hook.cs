@@ -66,14 +66,21 @@ namespace DotInjector_CSGO_injector.Injector
                     return InjectResponse.BypassRestoreHookError;
             }
 
+            CloseHandle(GameProcess.Handle);
             return InjectResponse.OK;
         }
 
         private static bool AttachDll(string dllPath)
         {
+            IntPtr handle = OpenProcess(ProcessAccessFlags.All, false, (Int32)GameProcess.Id);
+
+            if (handle == IntPtr.Zero)
+                return false;
+            
+
             IntPtr size = (IntPtr)dllPath.Length;
 
-            IntPtr DLLMemory = VirtualAllocEx(GameProcess.Handle, IntPtr.Zero, size, AllocationType.Reserve | AllocationType.Commit,
+            IntPtr DLLMemory = VirtualAllocEx(handle, IntPtr.Zero, size, AllocationType.Reserve | AllocationType.Commit,
                 MemoryProtection.ExecuteReadWrite);
 
             if (DLLMemory == IntPtr.Zero)
@@ -82,23 +89,23 @@ namespace DotInjector_CSGO_injector.Injector
 
             byte[] bytes = Encoding.ASCII.GetBytes(dllPath);
 
-            if (!WriteProcessMemory(GameProcess.Handle, DLLMemory, bytes, (int)bytes.Length, out _))
+            if (!WriteProcessMemory(handle, DLLMemory, bytes, (int)bytes.Length, out _))
                 return false;
 
             IntPtr kernel32Handle = GetModuleHandle("Kernel32.dll");
             IntPtr loadLibraryAAddress = GetProcAddress(kernel32Handle, "LoadLibraryA");
 
             if (loadLibraryAAddress == IntPtr.Zero)
-                   return false;
+                return false;
 
-            IntPtr threadHandle = CreateRemoteThread(GameProcess.Handle, IntPtr.Zero, 0, loadLibraryAAddress, DLLMemory, 0,
+            IntPtr threadHandle = CreateRemoteThread(handle, IntPtr.Zero, 0, loadLibraryAAddress, DLLMemory, 0,
                 IntPtr.Zero);
 
             if (threadHandle == IntPtr.Zero)
-                return false;
+               return false;
 
             CloseHandle(threadHandle);
-            CloseHandle(GameProcess.Handle);
+            CloseHandle(handle);
             return true;
         }
 
